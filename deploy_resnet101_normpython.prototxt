@@ -1,0 +1,45 @@
+name: "ResNet-101"
+input: "data"
+input_shape{
+dim: 1
+dim: 2048
+dim: 7
+dim: 7
+}
+
+input: "segMap"
+input_shape{
+dim: 1
+dim: 1
+dim: 20
+dim: 20
+}
+
+## give a weight over each category
+## give a weight over each category
+
+layer {
+  name: "segWeight"
+  type: "Python"
+  bottom: "data"
+  bottom: "segMap"
+  top: "weightMap"
+  python_param {
+    module: 'custom_layers'
+    layer: 'segLayer'
+    param_str: "{}"
+  }
+}
+
+## Get rmac regions with a RoiPooling layer. If batch size was 1, we end up with N_regions x D x pooled_h x pooled_w
+layer {
+  name: "roiPooling0"
+  type: "Python"
+  bottom: "weightMap"
+  top: "roiPooling0"
+  python_param {
+    module: 'custom_layers'
+    layer: 'roiPoolingLayer'
+    param_str: "{}"
+  }
+}
